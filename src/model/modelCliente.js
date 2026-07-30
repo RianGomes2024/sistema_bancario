@@ -1,0 +1,55 @@
+import banco from"../database/Conexao.js"
+
+const createUser=(async(dados)=>{
+    const {cpf,nome,email,senha,telefone}=dados;
+    const sql="INSERT INTO Cliente(cpf,nome,email,senha,telefone) VALUES (?,?,?,?,?)";
+    const [user]=await banco.query(sql,[cpf,nome,email,senha,telefone]);
+    return user;
+});
+
+const getUserByCpf=(async(cpf)=>{
+    const sql="SELECT*FROM Cliente WHERE cpf=?";
+    const [user]=await banco.query(sql,[cpf]);
+    return user;
+});
+const getUsersDados=(async(cpf,email,telefone)=>{
+    const sql="SELECT*FROM Cliente WHERE cpf=? or email=? or telefone=?";
+    const [user]=await banco.query(sql,[cpf,email,telefone]);
+    return user;
+});
+
+const getUsers=(async()=>{
+    const sql="SELECT*FROM Cliente";
+    const [user]=await banco.query(sql);
+    return user;
+});
+
+const deleteUser=(async(cpf)=>{
+    const sql="DELETE FROM Cliente WHERE cpf=?";
+    const user=await banco.query(sql,[cpf]);
+    return user;
+});
+
+const updateUser=(async(campos,valores,cpf)=>{
+    const sql=`UPDATE Cliente SET ${campos} WHERE cpf=?`;
+    const user=await banco.query(sql,[valores,cpf]);
+    return user;
+});
+
+const getTransationsUser=(async(cpf)=>{
+     const sql=`select*from transacoes 
+    join Conta as contas on transacoes.id_conta_origem=contas.id_conta
+    join Conta on transacoes.id_conta_destino=contas.id_conta 
+    join Cliente on contas.id_cliente=Cliente.id_cliente
+    where Cliente.cpf=12345687`;
+    const [transations]=await banco.query(sql,[cpf])
+    return transations
+})
+
+
+const login=(async(email)=>{
+    const sql="select*from cliente where email=?"
+    const cliente=await banco.query(sql,[email])
+    return cliente
+})
+export default{login,createUser,getUserByCpf,getUsers,deleteUser,updateUser,getTransationsUser,getUsersDados}
