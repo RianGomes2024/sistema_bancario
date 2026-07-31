@@ -9,7 +9,7 @@ const createConta=(async(numero_conta,id_cliente,)=>{
 
 
 const getContaByCpf=(async(cpf)=>{
-    const sql=`select numero_conta,saldo from Conta
+    const sql=`select id_conta,numero_conta,saldo,id_cliente from Conta
                join cliente on Conta.id_cliente=Cliente.id_cliente
                where Cliente.cpf=?`;
     const [conta]=await banco.query(sql,[cpf]);

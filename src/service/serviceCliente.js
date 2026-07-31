@@ -65,7 +65,7 @@ const login=(async(email,senha)=>{
     const auth=await model.login(email)
     const senhaHash=auth.senha
     if(auth.length===0)throw new Error("ERRO! Usuário não encontrado!");
-    const token=jwt.sign({id_cliente},process.env.SEGREDO,process.env.EXPIRACAO)
+    const token=jwt.sign({id_cliente,cpf},process.env.SEGREDO,process.env.EXPIRACAO)
     const verifySenha=bcrypt.compare(senha,senhaHash);
     if(!verifySenha)throw new Error("ERRO! Senha Incorreta!");
     return token    

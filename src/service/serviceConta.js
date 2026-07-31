@@ -11,7 +11,7 @@ const createConta=(async(dados)=>{
     if(verifyClientes.length===0)throw new Error("ERRO! Cliente precisa estar cadastrado na plataforma para abrir uma conta!");
     const numero_conta=Math.floor(Math.random()*(80000-1000)-1000)
     const contaCliente=new Conta(numero_conta,id_cliente)
-    const conta=await modelConta.createConta(numero_conta,id_cliente)
+    const conta=await modelConta.createConta(contaCliente)
     return conta
 }) 
 

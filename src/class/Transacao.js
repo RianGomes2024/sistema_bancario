@@ -1,10 +1,11 @@
 class Transacao{
-    constructor(id_conta_origem,id_conta_destino,tipo,valor,decricao){
-        this.id_conta_origem=id_conta_origem,
-        this.id_conta_destino=id_conta_destino,
-        this.tipo=tipo,
-        this.valor=valor,
-        this.decricao=decricao
+    constructor(dados){
+        this.id_conta_origem=dados.id_conta_origem,
+        this.id_conta_destino=dados.id_conta_destino,
+        this.tipo=dados.tipo,
+        this.valor=dados.valor,
+        this.decricao=dados.decricao
     }
+     
 }
 export default Transacao
