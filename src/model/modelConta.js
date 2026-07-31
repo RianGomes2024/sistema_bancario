@@ -1,10 +1,9 @@
 import banco from"../database/Conexao.js"
 
 
-const createConta=(async(dados)=>{
-    const {id_cliente,saldo}=dados;
-    const sql="INSERT INTO Conta (numero_conta,id_cliente) VALUES(?)";
-    const conta=await banco.query(sql,[numero_conta,id_cliente,saldo]);
+const createConta=(async(numero_conta,id_cliente,)=>{
+    const sql="INSERT INTO Conta (numero_conta,id_cliente) VALUES(?,?)";
+    const conta=await banco.query(sql,[numero_conta,id_cliente]);
     return conta;
 });
 

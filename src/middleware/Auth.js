@@ -15,3 +15,5 @@ const autenticar=((req,res,next)=>{
    })}
     
 })
+
+export default {autenticar}

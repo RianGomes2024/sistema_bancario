@@ -1,18 +1,17 @@
 class Conta{
-    constructor(numero_conta,id_cliente,saldo){
+    constructor(numero_conta,id_cliente){
         this.numero_conta=numero_conta,
-        this.id_cliente=id_cliente,
-        this.saldo=saldo
+        this.id_cliente=id_cliente
     }
-    sacar(valor){
-        if(valor<this.saldo)throw new Error("Saldo Insuficiente!");
+    sacar(valor,saldo){
+        if(valor<saldo)throw new Error("Saldo Insuficiente!");
         const atualizar=this.saldo-=valor
-        this.saldo=atualizar
+        saldo=atualizar
     }
-    depositar(valor){
+    depositar(valor,saldo){
         if(valor===0)throw new Error("Insira um valor válido");
-        const atualizar=this.saldo+=valor
-        this.saldo=atualizar
+        const atualizar=saldo+=valor
+        saldo=atualizar
     }
 }
 

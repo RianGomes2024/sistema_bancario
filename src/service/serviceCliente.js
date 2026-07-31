@@ -1,5 +1,6 @@
 import Cliente from "../class/Cliente.js";
 import model from"../model/modelCliente.js";
+import modelConta from"../model/modelConta.js"
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from"bcrypt"
@@ -32,7 +33,9 @@ const getByUsers=(async()=>{
 
 const deleteUser=(async(cpf)=>{
     const cliente=await model.deleteUser(cpf);
+    const conta=await modelConta.getContaByCpf(cpf)
     if(cliente.length===0)throw new Error("ERRO! Usuário não encontrado");
+    if(conta.length>=1)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para deposi deletar o usuário");
     return cliente;
 });
 

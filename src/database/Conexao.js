@@ -1,10 +1,10 @@
 import mysql from"mysql2/promise"
 
 const conexao=mysql.createPool({
-    host:"localhost",
-    user:"root",
-    password:"82696884",
-    database:"sistemaBancario"
+    host:process.env.HOST,
+    user:process.env.USER,
+    password:process.env.PASSWORD,
+    database:process.env.DATABASE
 })
 
 export default conexao
