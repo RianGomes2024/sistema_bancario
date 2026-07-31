@@ -2,6 +2,7 @@ import Cliente from "../class/Cliente.js";
 import model from"../model/modelCliente.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bcrypt from"bcrypt"
 dotenv.config()
 
 const createUser=(async(dados)=>{
@@ -10,6 +11,8 @@ const createUser=(async(dados)=>{
     if(verifyUser.email===dados.email)throw new Error("ERRO! E-mail já cadastrado!");
     if(verifyUser.telefone===dados.telefone)throw new Error("ERRO! Telefone já cadastrado!");
     const cliente=new Cliente(dados);
+    const senha=dados.senha
+    dados.senha=bcrypt.hash(senha,60)
     const result=await model.createUser(cliente);
     return result;
 });
@@ -58,12 +61,11 @@ const getTransationUser=(async(cpf)=>{
 const login=(async(email,senha)=>{
     const auth=await model.login(email)
     const senhaHash=auth.senha
-    if(auth.length===0)throw new Error("Usuário não encontrado!");
-    const token=jwt.sign({id_cliente},process.env.SEGREDO,)
-    if(senhaHash!=senha)throw new Error("Senha incorreta!");
-
-    
-    
+    if(auth.length===0)throw new Error("ERRO! Usuário não encontrado!");
+    const token=jwt.sign({id_cliente},process.env.SEGREDO,process.env.EXPIRACAO)
+    const verifySenha=bcrypt.compare(senha,senhaHash);
+    if(!verifySenha)throw new Error("ERRO! Senha Incorreta!");
+    return token    
 })
 
 export default{createUser,getByUserCpf,getByUsers,deleteUser,updateUser,getTransationUser}
