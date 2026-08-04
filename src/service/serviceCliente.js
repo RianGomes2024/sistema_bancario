@@ -37,16 +37,16 @@ const getByUsers=(async()=>{
 
 
 const deleteUser=(async(cpf)=>{
-    const cliente=await model.deleteUser(cpf);
+    const cliente=await model.getUserByCpf(cpf)
     const conta=await modelConta.getContaByCpf(cpf)
     if(cliente.length===0)throw new Error("ERRO! Usuário não encontrado");
-    if(conta.length>=1)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para deposi deletar o usuário");
-    return cliente;
+    if(conta.length>=1)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para depois deletar o usuário");
+    const deletar=await model.deleteUser(cpf);
+    return deletar;
 });
 
-const updateUser=(async(dados)=>{
+const updateUser=(async(dados,cpf)=>{
     const alteraveis=["nome","email","senha","telefone"]
-    const cpf=dados.cpf
     if(cpf===undefined || cpf===null)throw new Error("È necessário informar o CPF, para realizar o update");
     
     const keys=[]
@@ -55,11 +55,14 @@ const updateUser=(async(dados)=>{
         if(!alteraveis.includes(campos))throw new Error("Campo não permitido para alteração");
     }
     for(let atributos in dados){
-       keys.push(dados+"?")
+       keys.push(atributos+"=?")
        values.push(dados[atributos])        
     }
     const concatenar=keys.join(",")
-    const update=await model.updateUser(concatenar,valores,cpf)
+    console.log(keys)
+    console.log(concatenar)
+    const update=await model.updateUser(concatenar,values,cpf)
+    return update
 });
 
 const getTransationUser=(async(cpf)=>{

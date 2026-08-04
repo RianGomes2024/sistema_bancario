@@ -24,7 +24,7 @@ const getContaByCpf=(async(req,res)=>{
 
 const getContaByNumberConta=(async(req,res)=>{
     try{
-        const numero_conta=req.numero_conta
+        const numero_conta=req.body.numero_conta
         const conta=await serviceConta.getcontaByNumberConta(numero_conta)
         return res.status(200).json(conta);
     }catch(error){
