@@ -9,20 +9,41 @@ const createUser=(async(dados)=>{
 });
 
 const getUserByCpf=(async(cpf)=>{
-    const sql="SELECT*FROM Cliente WHERE cpf=?";
+    const sql=`SELECT id_cliente,
+    cpf,
+    nome,
+    email,
+    senha,
+    telefone,
+    DATE_FORMAT(data_criacao, '%Y-%m-%d %H:%i:%s') AS data_criacao 
+    from Cliente WHERE cpf=?`;
     const [user]=await banco.query(sql,[cpf]);
     return user;
 });
 const getUsersDados=(async(cpf,email,telefone)=>{
-    const sql="SELECT*FROM Cliente WHERE cpf=? or email=? or telefone=?";
+    const sql=`SELECT id_cliente,
+    cpf,
+    nome,
+    email,
+    senha,
+    telefone,
+    DATE_FORMAT(data_criacao, '%Y-%m-%d %H:%i:%s') AS data_criacao from Cliente WHERE cpf=? or email=? or telefone=?`;
     const [user]=await banco.query(sql,[cpf,email,telefone]);
     const indice0=user[0]
     return indice0;
 });
 
 const getUsers=(async()=>{
-    const sql="SELECT*FROM Cliente";
+    const sql=`select id_cliente,
+    cpf,
+    nome,
+    email,
+    senha,
+    telefone,
+    DATE_FORMAT(data_criacao, '%Y-%m-%d %H:%i:%s') AS data_criacao
+    from cliente`;
     const [user]=await banco.query(sql);
+    console.log(user)
     return user;
 });
 

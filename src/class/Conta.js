@@ -1,7 +1,8 @@
 class Conta{
-    constructor(numero_conta,id_cliente,saldo=0){
+    constructor(numero_conta,id_cliente,id_conta,saldo){
         this.numero_conta=numero_conta,
-        this.id_cliente=id_cliente
+        this.id_cliente=id_cliente,
+        this.id_conta=id_conta,
         this.saldo=saldo
     }
     sacar(valor){

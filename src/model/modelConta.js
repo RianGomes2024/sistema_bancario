@@ -2,7 +2,7 @@ import banco from"../database/Conexao.js"
 
 
 const createConta=(async(dados)=>{
-    const {numero_conta,id_cliente}=dados
+    const {numero_conta,id_cliente,id_conta}=dados
     const sql="INSERT INTO Conta (numero_conta,id_cliente) VALUES(?,?)";
     const conta=await banco.query(sql,[numero_conta,id_cliente]);
     return conta;
@@ -18,7 +18,7 @@ const getContaByCpf=(async(cpf)=>{
 });
 
 const getContaByNumberConta=(async(numero_conta)=>{
-    const sql=`select id_cliente,saldo from conta where numero_conta=?`;
+    const sql=`select id_cliente,saldo,id_conta from conta where numero_conta=?`;
     const [conta]=await banco.query(sql,[numero_conta]);
     return conta;
 });
@@ -27,6 +27,7 @@ const getContaByNumberConta=(async(numero_conta)=>{
 const getByContas=(async()=>{
     const sql="select*from Conta"
     const [conta]=await banco.query(sql);
+    console.log(conta)
     return conta;
 })
 
