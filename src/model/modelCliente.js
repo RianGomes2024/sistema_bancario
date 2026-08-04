@@ -1,3 +1,4 @@
+
 import banco from"../database/Conexao.js"
 
 const createUser=(async(dados)=>{
@@ -15,7 +16,8 @@ const getUserByCpf=(async(cpf)=>{
 const getUsersDados=(async(cpf,email,telefone)=>{
     const sql="SELECT*FROM Cliente WHERE cpf=? or email=? or telefone=?";
     const [user]=await banco.query(sql,[cpf,email,telefone]);
-    return user;
+    const indice0=user[0]
+    return indice0;
 });
 
 const getUsers=(async()=>{
@@ -49,7 +51,8 @@ const getTransationsUser=(async(cpf)=>{
 
 const login=(async(email)=>{
     const sql="select*from cliente where email=?"
-    const cliente=await banco.query(sql,[email])
-    return cliente
+    const [cliente]=await banco.query(sql,[email])
+    const indice0=cliente[0]
+    return indice0
 })
 export default{login,createUser,getUserByCpf,getUsers,deleteUser,updateUser,getTransationsUser,getUsersDados}

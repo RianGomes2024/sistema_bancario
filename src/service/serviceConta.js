@@ -1,16 +1,18 @@
-import modelConta from "../model/modelConta";
+import modelConta from "../model/modelConta.js";
 import modelCliente from "../model/modelCliente.js";
-import conta from"../class/Conta.js";
+import Conta from"../class/Conta.js";
 
 
-const createConta=(async(dados)=>{
-    const cpf=dados.cpf
+const createConta=(async(dados,id_cliente,cpf)=>{
     const verifyContas=await modelConta.getContaByCpf(cpf);
     const verifyClientes=await modelCliente.getUserByCpf(cpf);
     if(verifyContas.length>=1)throw new Error("ERRO! CPF já cadastrado!");
     if(verifyClientes.length===0)throw new Error("ERRO! Cliente precisa estar cadastrado na plataforma para abrir uma conta!");
     const numero_conta=Math.floor(Math.random()*(80000-1000)-1000)
+    console.log(numero_conta)
+    console.log(id_cliente)
     const contaCliente=new Conta(numero_conta,id_cliente)
+    console.log(contaCliente)
     const conta=await modelConta.createConta(contaCliente)
     return conta
 }) 

@@ -2,23 +2,28 @@ import Cliente from "../class/Cliente.js";
 import model from"../model/modelCliente.js";
 import modelConta from"../model/modelConta.js"
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import bcrypt from"bcrypt"
-dotenv.config()
+
 
 const createUser=(async(dados)=>{
     const verifyUser=await model.getUsersDados(dados.cpf,dados.email,dados.telefone);
-    if(verifyUser.cpf===dados.cpf)throw new Error("ERRO! CPF já cadastrado!");
-    if(verifyUser.email===dados.email)throw new Error("ERRO! E-mail já cadastrado!");
-    if(verifyUser.telefone===dados.telefone)throw new Error("ERRO! Telefone já cadastrado!");
+    if(verifyUser===undefined){
+    const senha=await bcrypt.hash(dados.senha,10)
+    dados.senha=senha
     const cliente=new Cliente(dados);
-    const senha=dados.senha
-    dados.senha=bcrypt.hash(senha,60)
     const result=await model.createUser(cliente);
     return result;
+    } 
+    const cpf=verifyUser.cpf
+    const parseString=dados.cpf.toString()
+    if(parseString===cpf)throw new Error("ERRO! CPF já cadastrado!");
+    if(verifyUser.email===dados.email)throw new Error("ERRO! E-mail já cadastrado!");
+    if(verifyUser.telefone===dados.telefone)throw new Error("ERRO! Telefone já cadastrado!");
+    
 });
 
 const getByUserCpf=(async(cpf)=>{
+    console.log(cpf)
     const cliente=await model.getUserByCpf(cpf);
     if(cliente.length===0)throw new Error("ERRO! Usuário não encontrado");
     return cliente;
@@ -27,7 +32,7 @@ const getByUserCpf=(async(cpf)=>{
 const getByUsers=(async()=>{
     const clientes=await model.getUsers();
     if(clientes.length===0)throw new Error("ERRO! Não usuários cadastrados");
-    return cliente;
+    return clientes;
 });
 
 
@@ -42,6 +47,8 @@ const deleteUser=(async(cpf)=>{
 const updateUser=(async(dados)=>{
     const alteraveis=["nome","email","senha","telefone"]
     const cpf=dados.cpf
+    if(cpf===undefined || cpf===null)throw new Error("È necessário informar o CPF, para realizar o update");
+    
     const keys=[]
     const values=[]
     for(const campos in dados){
@@ -63,15 +70,19 @@ const getTransationUser=(async(cpf)=>{
 
 const login=(async(email,senha)=>{
     const auth=await model.login(email)
+    const id_cliente=auth.id_cliente
+    const cpf=auth.cpf
     const senhaHash=auth.senha
     if(auth.length===0)throw new Error("ERRO! Usuário não encontrado!");
     const token=jwt.sign({id_cliente,cpf},process.env.SEGREDO,process.env.EXPIRACAO)
-    const verifySenha=bcrypt.compare(senha,senhaHash);
+    console.log(senha)
+    console.log(senhaHash)
+    const verifySenha=await bcrypt.compare(senha,senhaHash);
     if(!verifySenha)throw new Error("ERRO! Senha Incorreta!");
     return token    
 })
 
-export default{createUser,getByUserCpf,getByUsers,deleteUser,updateUser,getTransationUser}
+export default{login,createUser,getByUserCpf,getByUsers,deleteUser,updateUser,getTransationUser}
 
 
 

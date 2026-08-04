@@ -1,7 +1,8 @@
 import banco from "../database/Conexao.js"
 
 const createTransacao=(async(novaContaOrigem,novaContaDestino,classTransacao)=>{
-   await banco.beginTransaction();
+   try{
+    await banco.beginTransaction();
    await banco.query(
     `update conta set saldo=? where id_conta=?`
      [novaContaOrigem.saldo,novaContaOrigem.id_conta]
@@ -10,10 +11,18 @@ const createTransacao=(async(novaContaOrigem,novaContaDestino,classTransacao)=>{
     `update conta set saldo=? where id_conta=?`
      [novaContaDestino.saldo,novaContaDestino.id_conta]
    )
-   await banco.query(
+   const [resultado]=await banco.query(
     `insert into transacoes (id_conta_origem,id_conta_destino,tipo,valor,descricao) VALUES(?,?,?,?,?)`
      [classTransacao.id_conta_origem,classTransacao.id_conta_destino,classTransacao.tipo,classTransacao.valor,classTransacao.descricao]
    )
+   await banco.commit()
+   return resultado
+}catch(err){
+    await banco.rollback()
+    throw err;
+}finally{
+    banco.releaseConnection()
+}
 })
 
 const getContaByNumber=(async(numero_conta)=>{
