@@ -37,6 +37,7 @@ const sacar=(async(valor,cpf)=>{
     let saldo=Number(verifyConta.saldo)
     const numero_conta=verifyConta.numero_conta    
     const conta=new classConta(numero_conta,id_cliente,id_conta,saldo)
+    conta.sacar(valor)
     const newSaldo=saldo-=valor
     const saque=await modeltransacao.sacar(newSaldo,id_conta)
     return saque
