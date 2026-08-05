@@ -6,22 +6,24 @@ import classConta from"../class/Conta.js"
 const transferir=(async(numero_conta,valor,cpf,descricao)=>{
     const contaOrigem=(await modelConta.getContaByCpf(cpf))[0]
     const contaDestino=(await modelConta.getContaByNumberConta(numero_conta))[0] 
+
     if(contaDestino===undefined)throw new Error("Conta destino não encontrada!");
     if(contaOrigem===undefined)throw new Error("Conta origem não encontrada");
     
-    const id_conta_origem=contaOrigem.id_conta    
+    const id_conta_origem=contaOrigem.id_conta
     const id_cliente_origem=contaOrigem.id_cliente
     const saldoOrigem=Number(contaOrigem.saldo)
     const novaContaOrigem=new classConta(numero_conta,id_cliente_origem,id_conta_origem,saldoOrigem)
     novaContaOrigem.sacar(valor)
+    
     const id_conta_destino=contaDestino.id_conta
+    if(id_conta_origem===id_conta_destino)throw new Error("ERRO! Não é possivel transferir para mesma conta!!");
     const id_cliente_destino=contaDestino.id_cliente
     const saldoDestino=Number(contaDestino.saldo)
     const novaContaDestino=new classConta(numero_conta,id_cliente_destino,id_conta_destino,saldoDestino)
     novaContaDestino.depositar(valor)
     const classTransacao=new classTransation(id_conta_origem,id_conta_destino,valor,descricao)
     const transacao=await modeltransacao.Transferir(novaContaOrigem,novaContaDestino,classTransacao)
-   
     return transacao
 })
 

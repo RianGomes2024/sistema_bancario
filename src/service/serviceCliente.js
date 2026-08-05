@@ -23,24 +23,23 @@ const createUser=(async(dados)=>{
 });
 
 const getByUserCpf=(async(cpf)=>{
-    console.log(cpf)
-    const cliente=await model.getUserByCpf(cpf);
-    if(cliente.length===0)throw new Error("ERRO! Usuário não encontrado");
+    const cliente=(await model.getUserByCpf(cpf))[0];
+    if(cliente===undefined)throw new Error("ERRO! Usuário não encontrado");
     return cliente;
 });
 
 const getByUsers=(async()=>{
-    const clientes=await model.getUsers();
-    if(clientes.length===0)throw new Error("ERRO! Não usuários cadastrados");
+    const clientes=(await model.getUsers())[0];
+    if(clientes===undefined)throw new Error("ERRO! Não usuários cadastrados");
     return clientes;
 });
 
 
 const deleteUser=(async(cpf)=>{
-    const cliente=await model.getUserByCpf(cpf)
-    const conta=await modelConta.getContaByCpf(cpf)
-    if(cliente.length===0)throw new Error("ERRO! Usuário não encontrado");
-    if(conta.length>=1)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para depois deletar o usuário");
+    const cliente=(await model.getUserByCpf(cpf))[0]
+    const conta=(await modelConta.getContaByCpf(cpf))[0]
+    if(cliente===undefined)throw new Error("ERRO! Usuário não encontrado");
+    if(conta===undefined)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para depois deletar o usuário");
     const deletar=await model.deleteUser(cpf);
     return deletar;
 });
@@ -59,27 +58,23 @@ const updateUser=(async(dados,cpf)=>{
        values.push(dados[atributos])        
     }
     const concatenar=keys.join(",")
-    console.log(keys)
-    console.log(concatenar)
     const update=await model.updateUser(concatenar,values,cpf)
     return update
 });
 
 const getTransationUser=(async(cpf)=>{
-    const transacoes=await model.getTransationsUser(cpf)
-    if(transacoes.length===0)throw new Error("Não há transações registradas com esse CPF!");
+    const transacoes=(await model.getTransationsUser(cpf))[0]
+    if(transacoes===undefined)throw new Error("Não há transações registradas com esse CPF!");
     return transacoes;
 })
 
 const login=(async(email,senha)=>{
-    const auth=await model.login(email)
+    const auth=(await model.login(email))[0]
     const id_cliente=auth.id_cliente
     const cpf=auth.cpf
     const senhaHash=auth.senha
-    if(auth.length===0)throw new Error("ERRO! Usuário não encontrado!");
+    if(auth===undefined)throw new Error("ERRO! Usuário não encontrado!");
     const token=jwt.sign({id_cliente,cpf},process.env.SEGREDO,process.env.EXPIRACAO)
-    console.log(senha)
-    console.log(senhaHash)
     const verifySenha=await bcrypt.compare(senha,senhaHash);
     if(!verifySenha)throw new Error("ERRO! Senha Incorreta!");
     return token    

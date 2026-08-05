@@ -29,7 +29,6 @@ const getcontaByNumberConta=(async(numero_conta)=>{
 
 const getByContas=(async()=>{
     const contas=(await modelConta.getByContas())[0]
-    console.log(contas)
     if(contas===undefined)throw new Error("ERRO! Não há contas cadastradas");
     return contas  
 })
@@ -37,7 +36,7 @@ const getByContas=(async()=>{
 const deleteConta=(async(cpf)=>{
     const verifyConta=(await modelConta.getContaByCpf(cpf))[0]
     const saldo=verifyConta.saldo
-    if(verifyConta.length===0)throw new Error("ERRO! Conta não encontrada!");
+    if(verifyConta===undefined)throw new Error("ERRO! Conta não encontrada!");
     if(saldo!==0)throw new Error("ERRO! Não é possivel deletar a conta com saldo disponivel!");
     const conta=await modelConta.deleteConta(cpf)
     return conta

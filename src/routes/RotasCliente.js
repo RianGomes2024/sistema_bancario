@@ -5,7 +5,7 @@ import Auth from "../middleware/Auth.js"
 const router=express.Router()
 
 
-router.post("/user",validacao.validyCampos(["cpf","nome","email","senha"]),controller.createUser)
+router.post("/user",validacao.validyCampos(["cpf","nome","email","senha"]),validacao.validyFormatos,controller.createUser)
 router.get("/search",Auth.autenticar,controller.getByUserCpf)
 router.get("/user",Auth.autenticar,controller.getByUsers)
 router.delete("/user",Auth.autenticar,controller.deleteUser)
