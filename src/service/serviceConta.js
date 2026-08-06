@@ -6,11 +6,11 @@ import Conta from"../class/Conta.js";
 const createConta=(async(id_cliente,cpf)=>{
     const verifyContas=(await modelConta.getContaByCpf(cpf))[0];
     const verifyClientes=(await modelCliente.getUserByCpf(cpf))[0];
-    if(verifyContas===undefined)throw new Error("ERRO! CPF já cadastrado!");
+
+    if(verifyContas!==undefined)throw new Error("ERRO! CPF já cadastrado!");
     if(verifyClientes===undefined)throw new Error("ERRO! Cliente precisa estar cadastrado na plataforma para abrir uma conta!");
     const numero_conta=Math.floor(Math.random()*(80000-1000)-1000)
-    const id_conta=verifyContas.id_conta
-    const contaCliente=new Conta(numero_conta,id_cliente,id_conta)
+    const contaCliente=new Conta(numero_conta,id_cliente)
     const conta=await modelConta.createConta(contaCliente)
     return conta
 }) 

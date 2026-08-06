@@ -70,6 +70,7 @@ const getTransationUser=(async(cpf)=>{
 
 const login=(async(email,senha)=>{
     const auth=(await model.login(email))[0]
+    console.log(auth)
     const id_cliente=auth.id_cliente
     const cpf=auth.cpf
     const senhaHash=auth.senha

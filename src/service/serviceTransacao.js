@@ -6,6 +6,7 @@ import classConta from"../class/Conta.js"
 const transferir=(async(numero_conta,valor,cpf,descricao)=>{
     const contaOrigem=(await modelConta.getContaByCpf(cpf))[0]
     const contaDestino=(await modelConta.getContaByNumberConta(numero_conta))[0] 
+    const tipo="transferir"
 
     if(contaDestino===undefined)throw new Error("Conta destino não encontrada!");
     if(contaOrigem===undefined)throw new Error("Conta origem não encontrada");
@@ -22,30 +23,35 @@ const transferir=(async(numero_conta,valor,cpf,descricao)=>{
     const saldoDestino=Number(contaDestino.saldo)
     const novaContaDestino=new classConta(numero_conta,id_cliente_destino,id_conta_destino,saldoDestino)
     novaContaDestino.depositar(valor)
-    const classTransacao=new classTransation(id_conta_origem,id_conta_destino,valor,descricao)
-    const transacao=await modeltransacao.Transferir(novaContaOrigem,novaContaDestino,classTransacao)
+    const classTransacao=new classTransation(id_conta_origem,id_conta_destino,valor,descricao,tipo)
+    const transacao=await modeltransacao.Transferir(novaContaOrigem,novaContaDestino,classTransacao,tipo)
     return transacao
 })
 
 
 
-const sacar=(async(valor,cpf)=>{
+const sacar=(async(valor,cpf,descricao)=>{
+    const tipo="saque"
     const verifyConta=(await modelConta.getContaByCpf(cpf))[0]
     if(verifyConta===undefined)throw new Error("Conta não encontrada");
     const id_conta=verifyConta.id_conta
     const id_cliente=verifyConta.id_cliente
     let saldo=Number(verifyConta.saldo)
     const numero_conta=verifyConta.numero_conta    
-    const conta=new classConta(numero_conta,id_cliente,id_conta,saldo)
+    console.log(saldo)
+    console.log(valor)
+    const conta=new classConta(numero_conta,id_cliente,saldo)
     conta.sacar(valor)
+    const classTransacao=new classTransation(id_conta,null,valor,descricao,tipo)
     const newSaldo=saldo-=valor
-    const saque=await modeltransacao.sacar(newSaldo,id_conta)
+    const saque=await modeltransacao.sacar(classTransacao,newSaldo)
     return saque
 
 })
 
 
-const depositar=(async(valor,cpf)=>{
+const depositar=(async(valor,cpf,descricao)=>{
+    const tipo="depositos"
     const verifyConta=(await modelConta.getContaByCpf(cpf))[0]
     if(verifyConta===undefined)throw new Error("Conta não encontrada");
     const id_conta=verifyConta.id_conta
@@ -54,8 +60,9 @@ const depositar=(async(valor,cpf)=>{
     const numero_conta=verifyConta.numero_conta    
     const conta=new classConta(numero_conta,id_cliente,id_conta,saldo)
     conta.depositar(valor)
+    const classTransacao=new classTransation(null,id_conta,valor,descricao,tipo)
     const newSaldo=saldo+=valor
-    const deposito=await modeltransacao.depositar(newSaldo,id_conta)
+    const deposito=await modeltransacao.depositar(classTransacao,newSaldo)
     return deposito
 })
 

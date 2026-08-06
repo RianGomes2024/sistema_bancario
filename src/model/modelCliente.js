@@ -73,7 +73,6 @@ const getTransationsUser=(async(cpf)=>{
 const login=(async(email)=>{
     const sql="select*from cliente where email=?"
     const [cliente]=await banco.query(sql,[email])
-    const indice0=cliente[0]
-    return indice0
+    return cliente
 })
 export default{login,createUser,getUserByCpf,getUsers,deleteUser,updateUser,getTransationsUser,getUsersDados}

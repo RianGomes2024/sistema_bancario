@@ -1,9 +1,10 @@
 class Transacao{
-    constructor(id_conta_origem,id_conta_destino,valor,descricao){
+    constructor(id_conta_origem,id_conta_destino,valor,descricao,tipo){
         this.id_conta_origem=id_conta_origem,
         this.id_conta_destino=id_conta_destino,
         this.valor=valor,
-        this.decricao=descricao
+        this.descricao=descricao,
+        this.tipo=tipo
     }
      
 }
