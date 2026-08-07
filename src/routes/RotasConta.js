@@ -10,7 +10,8 @@ router.post("/conta",Auth.autenticar,controllerConta.createConta)
 router.get("/search/cpf",Auth.autenticar,controllerConta.getContaByCpf)
 router.get("/search/conta",Auth.autenticar,controllerConta.getContaByNumberConta)
 router.get("/conta",Auth.autenticar,controllerConta.getByContas)
-router.delete("/conta",Auth.autenticar,controllerConta.deleteConta)
+router.patch("/desativar",Auth.autenticar,controllerConta.desativarConta)
+router.patch("/ativar",Auth.autenticar,controllerConta.ativarConta)
 
 
 export default{router}

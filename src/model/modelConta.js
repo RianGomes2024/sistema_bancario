@@ -10,7 +10,7 @@ const createConta=(async(dados)=>{
 
 
 const getContaByCpf=(async(cpf)=>{
-    const sql=`select id_conta,numero_conta,saldo, Conta.id_cliente from Conta
+    const sql=`select id_conta,numero_conta,saldo, Conta.id_cliente, conta.status_conta from Conta
                join cliente on Conta.id_cliente=Cliente.id_cliente
                where Cliente.cpf=?`;
     const [conta]=await banco.query(sql,[cpf]);
@@ -31,17 +31,27 @@ const getByContas=(async()=>{
     return conta;
 })
 
-const deleteConta=(async(cpf)=>{
-    const sql=`delete conta
-               from conta
-               join cliente on cliente.id_cliente=conta.id_cliente
-               where cpf=?`;
-    const deletar=await banco.query(sql,[cpf])     
-    return deletar      
+const desativarConta=(async(cpf)=>{
+    const sql=`UPDATE conta
+              join cliente on conta.id_cliente=cliente.id_cliente
+              set status_conta="desativada"
+              where cliente.cpf=?`;
+    const desativar=await banco.query(sql,[cpf])     
+    return desativar     
+});
+
+const ativarConta=(async(cpf)=>{
+    const sql=`UPDATE conta
+              join cliente on conta.id_cliente=cliente.id_cliente
+              set status_conta="ativa"
+              where cliente.cpf=?`;
+    const ativar=await banco.query(sql,[cpf])     
+    return ativar     
 });
 
 
 
-export default{createConta,deleteConta,getByContas,getContaByCpf,getContaByNumberConta}
+
+export default{createConta,desativarConta,getByContas,getContaByCpf,getContaByNumberConta,ativarConta}
 
 

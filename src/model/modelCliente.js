@@ -29,8 +29,7 @@ const getUsersDados=(async(cpf,email,telefone)=>{
     telefone,
     DATE_FORMAT(data_criacao, '%Y-%m-%d %H:%i:%s') AS data_criacao from Cliente WHERE cpf=? or email=? or telefone=?`;
     const [user]=await banco.query(sql,[cpf,email,telefone]);
-    const indice0=user[0]
-    return indice0;
+    return user;
 });
 
 const getUsers=(async()=>{

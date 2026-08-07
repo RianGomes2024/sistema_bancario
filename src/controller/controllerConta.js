@@ -42,14 +42,23 @@ const getByContas=(async(req,res)=>{
     }
 })
 
-const deleteConta=(async(req,res)=>{
+const desativarConta=(async(req,res)=>{
     try{
     const cpf=req.usuario.cpf
-    const conta=await serviceConta.deleteConta(cpf)
-    return res.status(200).json({message:"Conta Deletada com sucesso!"});
+    const conta=await serviceConta.desativarConta(cpf)
+    return res.status(200).json({message:"Conta Desativada com sucesso!"});
+    }catch(error){
+        return res.status(400).json({erro:error.message})
+    }
+})
+const ativarConta=(async(req,res)=>{
+    try{
+    const cpf=req.usuario.cpf
+    const conta=await serviceConta.ativarConta(cpf)
+    return res.status(200).json({message:"Conta ativada com sucesso!"});
     }catch(error){
         return res.status(400).json({erro:error.message})
     }
 })
 
-export default{createConta,getByContas,getContaByCpf,getContaByNumberConta,deleteConta}
+export default{createConta,getByContas,getContaByCpf,getContaByNumberConta,desativarConta,ativarConta}

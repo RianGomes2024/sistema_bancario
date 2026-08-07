@@ -3,10 +3,11 @@ import model from"../model/modelCliente.js";
 import modelConta from"../model/modelConta.js"
 import jwt from "jsonwebtoken";
 import bcrypt from"bcrypt"
+import modelCliente from "../model/modelCliente.js";
 
 
 const createUser=(async(dados)=>{
-    const verifyUser=await model.getUsersDados(dados.cpf,dados.email,dados.telefone);
+    const verifyUser=await model.getUsersDados(dados.cpf,dados.email,dados.telefone)[0];
     if(verifyUser===undefined){
     const senha=await bcrypt.hash(dados.senha,10)
     dados.senha=senha
@@ -29,8 +30,8 @@ const getByUserCpf=(async(cpf)=>{
 });
 
 const getByUsers=(async()=>{
-    const clientes=(await model.getUsers())[0];
-    if(clientes===undefined)throw new Error("ERRO! Não usuários cadastrados");
+    const clientes=(await model.getUsers());
+    if(clientes.length===0)throw new Error("ERRO! Não usuários cadastrados");
     return clientes;
 });
 
@@ -39,23 +40,33 @@ const deleteUser=(async(cpf)=>{
     const cliente=(await model.getUserByCpf(cpf))[0]
     const conta=(await modelConta.getContaByCpf(cpf))[0]
     if(cliente===undefined)throw new Error("ERRO! Usuário não encontrado");
-    if(conta===undefined)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para depois deletar o usuário");
+    if(conta!==undefined)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para depois deletar o usuário");
     const deletar=await model.deleteUser(cpf);
     return deletar;
 });
 
 const updateUser=(async(dados,cpf)=>{
+    const conta=await modelCliente.getUsersDados(cpf)
     const alteraveis=["nome","email","senha","telefone"]
     if(cpf===undefined || cpf===null)throw new Error("È necessário informar o CPF, para realizar o update");
-    
     const keys=[]
     const values=[]
     for(const campos in dados){
-        if(!alteraveis.includes(campos))throw new Error("Campo não permitido para alteração");
-    }
-    for(let atributos in dados){
-       keys.push(atributos+"=?")
-       values.push(dados[atributos])        
+        if(!alteraveis.includes(campos))throw new Error(`ERRO! ${campos.toUpperCase()} não permitido para alteração`);
+        if(campos==="telefone"){
+            const parseNumero=dados[campos].toString()
+            const verifyTelefone=await modelCliente.getUsersDados("","",dados[campos])
+            if(parseNumero.length!==11)throw new Error("ERRO! Formato inválido de telefone (DDDXxxxxxxxx)");
+            if(verifyTelefone.length>=1)throw new Error("ERRO! Telefone já cadastrado!");   
+        }
+        if(campos==="email"){
+            const verifyEmail=await modelCliente.getUsersDados("",dados[campos],"")
+            if(!dados[campos].endsWith("@gmail.com") && !dados[campos].endsWith("@outlook.com") && !dados[campos].endsWith("@hotmail.com"))
+            throw new Error("Formato de e-mail inválido");
+            if(verifyEmail.length>=1)throw new Error("ERRO! E-mail já cadastrado!");   
+        }
+        keys.push(campos+"=?")
+        values.push(dados[campos])        
     }
     const concatenar=keys.join(",")
     const update=await model.updateUser(concatenar,values,cpf)
@@ -63,8 +74,8 @@ const updateUser=(async(dados,cpf)=>{
 });
 
 const getTransationUser=(async(cpf)=>{
-    const transacoes=(await model.getTransationsUser(cpf))[0]
-    if(transacoes===undefined)throw new Error("Não há transações registradas com esse CPF!");
+    const transacoes=(await model.getTransationsUser(cpf))
+    if(transacoes.length===0)throw new Error("Não há transações registradas com esse CPF!");
     return transacoes;
 })
 

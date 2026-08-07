@@ -33,13 +33,22 @@ const getByContas=(async()=>{
     return contas  
 })
 
-const deleteConta=(async(cpf)=>{
+const desativarConta=(async(cpf)=>{
     const verifyConta=(await modelConta.getContaByCpf(cpf))[0]
-    const saldo=verifyConta.saldo
+    const saldo=Number(verifyConta.saldo)
     if(verifyConta===undefined)throw new Error("ERRO! Conta não encontrada!");
-    if(saldo!==0)throw new Error("ERRO! Não é possivel deletar a conta com saldo disponivel!");
-    const conta=await modelConta.deleteConta(cpf)
+    if(verifyConta.status_conta==="desativada")throw new Error("ERRO! A conta já está desativada!");
+    if(saldo!==0.00)throw new Error("ERRO! Não é possivel deletar a conta com saldo disponivel!");
+    const conta=await modelConta.desativarConta(cpf)
+    return conta
+})
+const ativarConta=(async(cpf)=>{
+    const verifyConta=(await modelConta.getContaByCpf(cpf))[0]
+    const saldo=Number(verifyConta.saldo)
+    if(verifyConta===undefined)throw new Error("ERRO! Conta não encontrada!");
+    if(verifyConta.status_conta==="ativa")throw new Error("ERRO! A conta já está ativa!");
+    const conta=await modelConta.ativarConta(cpf)
     return conta
 })
 
-export default{createConta,getContaByCpf,getcontaByNumberConta,getByContas,deleteConta}
+export default{createConta,getContaByCpf,getcontaByNumberConta,getByContas,desativarConta,ativarConta}
