@@ -28,7 +28,7 @@ const getcontaByNumberConta=(async(numero_conta)=>{
 })
 
 const getByContas=(async()=>{
-    const contas=(await modelConta.getByContas())[0]
+    const contas=(await modelConta.getByContas())
     if(contas===undefined)throw new Error("ERRO! Não há contas cadastradas");
     return contas  
 })

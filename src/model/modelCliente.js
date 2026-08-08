@@ -3,7 +3,7 @@ import banco from"../database/Conexao.js"
 
 const createUser=(async(dados)=>{
     const {cpf,nome,email,senha,telefone}=dados;
-    const sql="INSERT INTO Cliente(cpf,nome,email,senha,telefone) VALUES (?,?,?,?,?)";
+    const sql="INSERT INTO Cliente(cpf,nome,email,senha,telefone,status_conta) VALUES (?,?,?,?,?)";
     const [user]=await banco.query(sql,[cpf,nome,email,senha,telefone]);
     return user;
 });
@@ -15,6 +15,7 @@ const getUserByCpf=(async(cpf)=>{
     email,
     senha,
     telefone,
+    status_usuario,
     DATE_FORMAT(data_criacao, '%Y-%m-%d %H:%i:%s') AS data_criacao 
     from Cliente WHERE cpf=?`;
     const [user]=await banco.query(sql,[cpf]);
@@ -29,6 +30,7 @@ const getUsersDados=(async(cpf,email,telefone)=>{
     telefone,
     DATE_FORMAT(data_criacao, '%Y-%m-%d %H:%i:%s') AS data_criacao from Cliente WHERE cpf=? or email=? or telefone=?`;
     const [user]=await banco.query(sql,[cpf,email,telefone]);
+
     return user;
 });
 
@@ -47,7 +49,13 @@ const getUsers=(async()=>{
 });
 
 const deleteUser=(async(cpf)=>{
-    const sql="DELETE FROM Cliente WHERE cpf=?";
+    const sql=`update cliente set status_usuario="Encerrada" where cpf=?`;
+    const user=await banco.query(sql,[cpf]);
+    return user;
+});
+
+const ativarUser=(async(cpf)=>{
+    const sql=`update cliente set status_usuario="ativa" where cpf=?`;
     const user=await banco.query(sql,[cpf]);
     return user;
 });
@@ -59,11 +67,12 @@ const updateUser=(async(campos,valores,cpf)=>{
 });
 
 const getTransationsUser=(async(cpf)=>{
-     const sql=`select*from transacoes 
-    join Conta as contas on transacoes.id_conta_origem=contas.id_conta
-    join Conta on transacoes.id_conta_destino=contas.id_conta 
-    join Cliente on contas.id_cliente=Cliente.id_cliente
-    where Cliente.cpf=12345687`;
+     const sql=`select transacoes.* from transacoes 
+    left join Conta as contaOrigem on transacoes.id_conta_origem=contaOrigem.id_conta
+    left join Conta as contaDestino on transacoes.id_conta_destino=contaDestino.id_conta 
+	join Cliente on contaOrigem.id_cliente=Cliente.id_cliente
+    or contaDestino.id_cliente=Cliente.id_cliente
+ where Cliente.cpf=32165498765;`;
     const [transations]=await banco.query(sql,[cpf])
     return transations
 })
@@ -74,4 +83,4 @@ const login=(async(email)=>{
     const [cliente]=await banco.query(sql,[email])
     return cliente
 })
-export default{login,createUser,getUserByCpf,getUsers,deleteUser,updateUser,getTransationsUser,getUsersDados}
+export default{login,createUser,getUserByCpf,getUsers,deleteUser,updateUser,getTransationsUser,getUsersDados,ativarUser}

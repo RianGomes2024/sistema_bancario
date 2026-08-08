@@ -36,7 +36,16 @@ const deleteUser=(async(req,res)=>{
      try{
         const cpf=req.usuario.cpf
         const cliente=await service.deleteUser(cpf);
-        return res.status(200).json({message:"Usuário deletado com sucesso!"});
+        return res.status(200).json({message:"Usuário encerrado com sucesso!"});
+    }catch(error){
+        return res.status(400).json({erro:error.message})
+    }
+})
+const ativarUser=(async(req,res)=>{
+     try{
+        const cpf=req.usuario.cpf
+        const cliente=await service.ativarUser(cpf);
+        return res.status(200).json({message:"BEM-VINDO! Usuário ativado com sucesso!"});
     }catch(error){
         return res.status(400).json({erro:error.message})
     }
@@ -79,4 +88,4 @@ const login=(async(req,res)=>{
 })
 
 
-export default{createUser,deleteUser,getByUserCpf,getByUsers,getTransationUser,login,updateUser}
+export default{createUser,deleteUser,getByUserCpf,getByUsers,getTransationUser,login,updateUser,ativarUser}

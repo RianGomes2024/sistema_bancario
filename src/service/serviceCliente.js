@@ -7,7 +7,7 @@ import modelCliente from "../model/modelCliente.js";
 
 
 const createUser=(async(dados)=>{
-    const verifyUser=await model.getUsersDados(dados.cpf,dados.email,dados.telefone)[0];
+    const verifyUser=(await model.getUsersDados(dados.cpf,dados.email,dados.telefone))[0];
     if(verifyUser===undefined){
     const senha=await bcrypt.hash(dados.senha,10)
     dados.senha=senha
@@ -40,9 +40,19 @@ const deleteUser=(async(cpf)=>{
     const cliente=(await model.getUserByCpf(cpf))[0]
     const conta=(await modelConta.getContaByCpf(cpf))[0]
     if(cliente===undefined)throw new Error("ERRO! Usuário não encontrado");
-    if(conta!==undefined)throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que delete a conta para depois deletar o usuário");
+    if(conta.status_conta==="ativada")throw new Error("ERRO! Existe uma conta bancária ativa com seu CPF, é necessário que desative a conta para depois deletar o usuário");
+    if(cliente.status_usuario==="Encerrada")throw new Error("ERRO! A conta já se encontra encerrada!");
     const deletar=await model.deleteUser(cpf);
     return deletar;
+});
+
+const ativarUser=(async(cpf)=>{
+    const cliente=(await model.getUserByCpf(cpf))[0]
+    const statusUsuario="ativa"
+    if(cliente===undefined)throw new Error("ERRO! Usuário não encontrado!");
+    if(cliente.status_usuario==="ativa")throw new Error("ERRO! A conta já se encontra ativa!");
+    const ativar=await model.ativarUser(cpf);
+    return ativar;
 });
 
 const updateUser=(async(dados,cpf)=>{
@@ -92,7 +102,7 @@ const login=(async(email,senha)=>{
     return token    
 })
 
-export default{login,createUser,getByUserCpf,getByUsers,deleteUser,updateUser,getTransationUser}
+export default{login,createUser,getByUserCpf,getByUsers,deleteUser,updateUser,getTransationUser,ativarUser}
 
 
 
