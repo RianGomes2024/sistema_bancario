@@ -78,6 +78,19 @@ const getTransationsUser=(async(cpf)=>{
 })
 
 
+const getRecebimentos=(async(cpf,dataMinima,dataMaxima)=>{
+    const sql=`  select tipo,sum(valor),data_transacao from transacoes
+                 join conta on transacoes.id_conta_destino=conta.id_conta
+                 join cliente on cliente.id_cliente=conta.id_cliente
+                 WHERE DATE(data_transacao) >=? and DATE(data_transacao) <=? and cpf=?
+                group by tipo,data_transacao 
+ `
+   const recebimentos=await banco.query(sql,[dataMinima,dataMaxima,cpf])
+   return recebimentos 
+})
+
+
+
 const login=(async(email)=>{
     const sql="select*from cliente where email=?"
     const [cliente]=await banco.query(sql,[email])
